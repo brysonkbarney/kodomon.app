@@ -3,594 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kodomon — A Tamagotchi for your Claude Code activity</title>
-<meta name="description" content="A macOS desktop pet that grows from your real coding activity. XP, streaks, evolution, decay. 100% local, open source.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Kodomon</title>
+<meta name="description" content="A desktop pet that grows when you code. macOS desktop pet powered by real coding.">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --cream: #F5F0E1;
-    --cream-dark: #EBE5D3;
-    --red: #D83632;
-    --red-light: #E24B4A;
-    --red-glow: #D8363220;
-    --text: #2A2A2A;
-    --text-dim: #6B6560;
-    --border: #D6D0C4;
-    --purple: #7F77DD;
-    --teal: #1D9E75;
-    --coral: #D85A30;
-    --amber: #BA7517;
-  }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html {
-    background: var(--cream);
-    scroll-behavior: smooth;
-  }
 
   body {
     font-family: 'IBM Plex Mono', monospace;
-    color: var(--text);
-    background: var(--cream);
+    background: #F5F0E1;
+    color: #2A2A2A;
     min-height: 100vh;
-    position: relative;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
   }
 
-  /* Washi paper texture overlay */
+  /* Red bar at top like the app */
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, #e8e0cc33 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 20%, #ddd5c022 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 80%, #e0d8c418 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .page {
-    position: relative;
-    z-index: 1;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 60px 24px 48px;
-  }
-
-  /* ── Red accent bar at top ── */
-  .top-bar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
-    background: var(--red);
-    z-index: 100;
+    height: 5px;
+    background: #D83632;
+    z-index: 10;
   }
 
-  /* ── Hero ── */
-  .hero {
+  .card {
+    max-width: 480px;
+    width: 100%;
     text-align: center;
-    padding: 48px 0 40px;
   }
 
-  .hero-pretitle {
-    font-size: 13px;
+  .pretitle {
+    font-size: 12px;
     letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-  }
-
-  .hero-title {
-    font-family: 'DotGothic16', 'IBM Plex Mono', monospace;
-    font-size: clamp(48px, 10vw, 72px);
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    color: var(--text);
+    color: #6B6560;
     margin-bottom: 8px;
   }
 
-  .hero-jp {
+  h1 {
+    font-family: 'DotGothic16', monospace;
+    font-size: clamp(56px, 12vw, 80px);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .jp {
     font-family: 'DotGothic16', sans-serif;
-    font-size: clamp(18px, 4vw, 24px);
-    color: var(--red);
-    letter-spacing: 0.2em;
-    margin-bottom: 32px;
+    font-size: clamp(20px, 5vw, 28px);
+    color: #D83632;
+    letter-spacing: 0.25em;
+    margin-bottom: 40px;
   }
 
-  /* ── Pixel egg ── */
-  .egg-container {
+  /* Pixel egg */
+  .egg {
     display: flex;
     justify-content: center;
-    margin: 32px 0 36px;
+    margin-bottom: 40px;
+    animation: bob 2.5s ease-in-out infinite;
   }
 
-  .pixel-egg {
-    width: 64px;
-    height: 80px;
-    position: relative;
-    animation: egg-bob 2.5s ease-in-out infinite;
-    image-rendering: pixelated;
-  }
+  .egg-grid { image-rendering: pixelated; }
+  .egg-grid .r { display: flex; justify-content: center; }
+  .egg-grid .p { width: 8px; height: 8px; flex-shrink: 0; }
+  .c0 { background: transparent; }
+  .c1 { background: #8B6B4A; }
+  .c2 { background: #D9A882; }
+  .c3 { background: #C48A6A; }
+  .c4 { background: #A06B4A; }
 
-  .pixel-egg .row {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-  }
-
-  .pixel-egg .px {
-    width: 8px;
-    height: 8px;
-    flex-shrink: 0;
-  }
-
-  .px-b { background: #8B6B4A; }
-  .px-l { background: #D9A882; }
-  .px-m { background: #C48A6A; }
-  .px-d { background: #A06B4A; }
-  .px-n { background: transparent; }
-
-  @keyframes egg-bob {
+  @keyframes bob {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
+    50% { transform: translateY(-8px); }
   }
 
   .tagline {
-    font-size: 15px;
-    color: var(--text-dim);
-    text-align: center;
-    line-height: 1.6;
-    max-width: 380px;
-    margin: 0 auto;
-  }
-
-  /* ── Divider ── */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 40px auto;
-    max-width: 120px;
-  }
-
-  /* ── Install block ── */
-  .install-section {
-    text-align: center;
-    margin: 40px 0;
-  }
-
-  .install-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-    margin-bottom: 12px;
-  }
-
-  .install-box {
-    background: var(--text);
-    color: var(--cream);
-    border-radius: 10px;
-    padding: 20px 24px;
-    font-family: 'IBM Plex Mono', monospace;
     font-size: 14px;
-    line-height: 1.5;
+    color: #6B6560;
+    line-height: 1.6;
+    margin-bottom: 48px;
+  }
+
+  /* Install box */
+  .install {
+    background: #2A2A2A;
+    color: #F5F0E1;
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-size: 14px;
     text-align: left;
-    position: relative;
     cursor: pointer;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 4px 20px #2a2a2a18;
+    box-shadow: 0 4px 24px #2a2a2a15;
+    margin-bottom: 8px;
     overflow-x: auto;
-  }
-
-  .install-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px #2a2a2a25;
-  }
-
-  .install-box:active {
-    transform: translateY(0);
-  }
-
-  .install-box .prompt {
-    color: var(--teal);
-    user-select: none;
-  }
-
-  .install-box .cmd {
-    color: #F5F0E1;
-    word-break: break-all;
-  }
-
-  .install-box .url {
-    color: var(--coral);
-  }
-
-  .copy-hint {
-    font-size: 11px;
-    color: var(--text-dim);
-    margin-top: 10px;
-    transition: color 0.2s;
-  }
-
-  .copy-hint.copied {
-    color: var(--teal);
-  }
-
-  /* ── Features ── */
-  .features-section {
-    margin: 48px 0;
-  }
-
-  .features-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-    text-align: center;
-    margin-bottom: 24px;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .feature-card {
-    background: var(--cream);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 20px 16px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .feature-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px #2a2a2a0c;
-  }
-
-  .feature-icon {
-    font-size: 14px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    font-family: 'DotGothic16', monospace;
-    font-weight: 700;
-  }
-
-  .feature-card:nth-child(1) .feature-icon { background: var(--red-glow); color: var(--red); }
-  .feature-card:nth-child(2) .feature-icon { background: #7F77DD20; color: var(--purple); }
-  .feature-card:nth-child(3) .feature-icon { background: #1D9E7520; color: var(--teal); }
-  .feature-card:nth-child(4) .feature-icon { background: #D85A3020; color: var(--coral); }
-  .feature-card:nth-child(5) .feature-icon { background: #BA751720; color: var(--amber); }
-  .feature-card:nth-child(6) .feature-icon { background: #E24B4A20; color: var(--red-light); }
-
-  .feature-name {
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--text);
-  }
-
-  .feature-desc {
-    font-size: 11px;
-    color: var(--text-dim);
-    line-height: 1.5;
-  }
-
-  /* ── How it works ── */
-  .how-section {
-    margin: 48px 0;
-    text-align: center;
-  }
-
-  .how-title {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
-    margin-bottom: 24px;
-  }
-
-  .how-flow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .how-step {
-    background: var(--cream);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 12px;
-    font-weight: 500;
     white-space: nowrap;
   }
 
-  .how-arrow {
-    color: var(--border);
-    font-size: 16px;
-    user-select: none;
+  .install:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px #2a2a2a22;
   }
 
-  /* ── Stages ── */
-  .stages-section {
-    margin: 48px 0;
-    text-align: center;
-  }
+  .install .pr { color: #D83632; user-select: none; }
+  .install .url { color: #D85A30; }
 
-  .stages-title {
+  .hint {
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--text-dim);
+    color: #D6D0C4;
+    margin-bottom: 48px;
+    transition: color 0.2s;
+  }
+
+  .hint.ok { color: #1D9E75; }
+
+  /* Red accent line like the app widget */
+  .line {
+    width: 100%;
+    height: 3px;
+    background: #D83632;
+    border-radius: 2px;
     margin-bottom: 20px;
   }
 
-  .stages-row {
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 32px;
-    flex-wrap: wrap;
-  }
-
-  .stage-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .stage-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    background: var(--cream);
-  }
-
-  .stage-item:nth-child(1) .stage-dot { background: var(--text-dim); border-color: var(--text-dim); }
-  .stage-item:nth-child(2) .stage-dot { background: var(--teal); border-color: var(--teal); }
-  .stage-item:nth-child(3) .stage-dot { background: var(--coral); border-color: var(--coral); }
-  .stage-item:nth-child(4) .stage-dot { background: var(--purple); border-color: var(--purple); }
-
-  .stage-name {
-    font-family: 'DotGothic16', monospace;
-    font-size: 13px;
-    color: var(--text);
-  }
-
-  .stage-jp {
-    font-family: 'DotGothic16', sans-serif;
-    font-size: 11px;
-    color: var(--text-dim);
-  }
-
-  /* ── Footer ── */
-  .footer {
-    text-align: center;
-    padding: 40px 0 24px;
-    border-top: 1px solid var(--border);
-    margin-top: 48px;
-  }
-
-  .footer-meta {
+  .sub {
     font-size: 12px;
-    color: var(--text-dim);
-    margin-bottom: 8px;
+    color: #6B6560;
+    margin-bottom: 6px;
   }
 
-  .footer-meta span {
-    margin: 0 6px;
-    opacity: 0.4;
-  }
+  .sub span { margin: 0 8px; opacity: 0.3; }
 
-  .footer a {
-    color: var(--red);
+  .links a {
+    font-size: 12px;
+    color: #D83632;
     text-decoration: none;
-    font-size: 12px;
     font-weight: 500;
   }
 
-  .footer a:hover {
-    text-decoration: underline;
-  }
+  .links a:hover { text-decoration: underline; }
 
-  .footer-brand {
-    font-family: 'DotGothic16', monospace;
-    font-size: 11px;
-    color: var(--border);
-    margin-top: 16px;
-    letter-spacing: 0.1em;
-  }
-
-  /* ── Responsive ── */
-  @media (max-width: 500px) {
-    .page { padding: 48px 16px 32px; }
-    .features-grid { grid-template-columns: 1fr; }
-    .how-flow { flex-direction: column; }
-    .how-arrow { transform: rotate(90deg); }
-    .stages-row { gap: 20px; }
-    .install-box { font-size: 12px; padding: 16px; }
-  }
-
-  /* ── Entrance animations ── */
-  @keyframes fade-up {
-    from { opacity: 0; transform: translateY(16px); }
+  /* Entrance */
+  @keyframes up {
+    from { opacity: 0; transform: translateY(12px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .hero { animation: fade-up 0.6s ease-out both; }
-  .install-section { animation: fade-up 0.6s ease-out 0.15s both; }
-  .features-section { animation: fade-up 0.6s ease-out 0.3s both; }
-  .how-section { animation: fade-up 0.6s ease-out 0.4s both; }
-  .stages-section { animation: fade-up 0.6s ease-out 0.5s both; }
-  .footer { animation: fade-up 0.6s ease-out 0.6s both; }
+  .pretitle, h1, .jp { animation: up 0.5s ease-out both; }
+  h1 { animation-delay: 0.05s; }
+  .jp { animation-delay: 0.1s; }
+  .egg { animation: up 0.5s ease-out 0.15s both, bob 2.5s ease-in-out 0.7s infinite; }
+  .tagline { animation: up 0.5s ease-out 0.2s both; }
+  .install { animation: up 0.5s ease-out 0.3s both; }
+  .line { animation: up 0.5s ease-out 0.4s both; }
+
+  @media (max-width: 480px) {
+    .install { font-size: 12px; padding: 14px 16px; }
+  }
 </style>
 </head>
 <body>
 
-<div class="top-bar"></div>
+<div class="card">
+  <div class="pretitle">Welcome to</div>
+  <h1>KODOMON</h1>
+  <div class="jp">コードモン</div>
 
-<div class="page">
-
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero-pretitle">Welcome to</div>
-    <h1 class="hero-title">KODOMON</h1>
-    <div class="hero-jp">コードモン</div>
-
-    <div class="egg-container">
-      <div class="pixel-egg">
-        <div class="row"><div class="px px-n"></div><div class="px px-n"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-n"></div><div class="px px-n"></div></div>
-        <div class="row"><div class="px px-n"></div><div class="px px-b"></div><div class="px px-l"></div><div class="px px-l"></div><div class="px px-l"></div><div class="px px-l"></div><div class="px px-b"></div><div class="px px-n"></div></div>
-        <div class="row"><div class="px px-b"></div><div class="px px-l"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-l"></div><div class="px px-b"></div></div>
-        <div class="row"><div class="px px-b"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-b"></div></div>
-        <div class="row"><div class="px px-b"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-b"></div></div>
-        <div class="row"><div class="px px-b"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-b"></div></div>
-        <div class="row"><div class="px px-b"></div><div class="px px-m"></div><div class="px px-d"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-d"></div><div class="px px-m"></div><div class="px px-b"></div></div>
-        <div class="row"><div class="px px-n"></div><div class="px px-b"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-m"></div><div class="px px-b"></div><div class="px px-n"></div></div>
-        <div class="row"><div class="px px-n"></div><div class="px px-n"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-b"></div><div class="px px-n"></div><div class="px px-n"></div></div>
-      </div>
+  <div class="egg">
+    <div class="egg-grid">
+      <div class="r"><div class="p c0"></div><div class="p c0"></div><div class="p c1"></div><div class="p c1"></div><div class="p c1"></div><div class="p c1"></div><div class="p c0"></div><div class="p c0"></div></div>
+      <div class="r"><div class="p c0"></div><div class="p c1"></div><div class="p c2"></div><div class="p c2"></div><div class="p c2"></div><div class="p c2"></div><div class="p c1"></div><div class="p c0"></div></div>
+      <div class="r"><div class="p c1"></div><div class="p c2"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c2"></div><div class="p c1"></div></div>
+      <div class="r"><div class="p c1"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c1"></div></div>
+      <div class="r"><div class="p c1"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c1"></div></div>
+      <div class="r"><div class="p c1"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c1"></div></div>
+      <div class="r"><div class="p c1"></div><div class="p c3"></div><div class="p c4"></div><div class="p c3"></div><div class="p c3"></div><div class="p c4"></div><div class="p c3"></div><div class="p c1"></div></div>
+      <div class="r"><div class="p c0"></div><div class="p c1"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c3"></div><div class="p c1"></div><div class="p c0"></div></div>
+      <div class="r"><div class="p c0"></div><div class="p c0"></div><div class="p c1"></div><div class="p c1"></div><div class="p c1"></div><div class="p c1"></div><div class="p c0"></div><div class="p c0"></div></div>
     </div>
+  </div>
 
-    <p class="tagline">A Tamagotchi for your Claude Code activity.<br>Code daily. Keep your pet alive.</p>
-  </section>
+  <div class="tagline">A desktop pet that grows when you code.</div>
 
-  <div class="divider"></div>
+  <div class="install" onclick="copy()" role="button" tabindex="0">
+    <span class="pr">$ </span>curl -fsSL <span class="url">https://kodomon.app/install.sh</span> | bash
+  </div>
+  <div class="hint" id="h">click to copy</div>
 
-  <!-- Install -->
-  <section class="install-section">
-    <div class="install-label">Install</div>
-    <div class="install-box" onclick="copyInstall()" role="button" tabindex="0" aria-label="Copy install command">
-      <span class="prompt">$ </span><span class="cmd">curl -fsSL </span><span class="url">https://kodomon.app/install.sh</span><span class="cmd"> | bash</span>
-    </div>
-    <div class="copy-hint" id="copyHint">click to copy</div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- How it works -->
-  <section class="how-section">
-    <div class="how-title">How it works</div>
-    <div class="how-flow">
-      <div class="how-step">Code with Claude</div>
-      <div class="how-arrow">&rarr;</div>
-      <div class="how-step">Pet gains XP</div>
-      <div class="how-arrow">&rarr;</div>
-      <div class="how-step">Evolve & unlock</div>
-    </div>
-  </section>
-
-  <!-- Evolution stages -->
-  <section class="stages-section">
-    <div class="stages-title">4 Evolution Stages</div>
-    <div class="stages-row">
-      <div class="stage-item">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Tamago</div>
-        <div class="stage-jp">卵</div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Kobito</div>
-        <div class="stage-jp">小人</div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Kani</div>
-        <div class="stage-jp">蟹</div>
-      </div>
-      <div class="stage-item">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Kamisama</div>
-        <div class="stage-jp">神様</div>
-      </div>
-    </div>
-  </section>
-
-  <div class="divider"></div>
-
-  <!-- Features -->
-  <section class="features-section">
-    <div class="features-title">Features</div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">XP</div>
-        <div class="feature-name">XP & Streaks</div>
-        <div class="feature-desc">Earn XP from commits, file edits, and session time. Daily streaks multiply your gains up to 2x.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">EV</div>
-        <div class="feature-name">Evolution</div>
-        <div class="feature-desc">4 stages gated by XP, active days, and streak. Consistency beats grinding.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">MO</div>
-        <div class="feature-name">Mood System</div>
-        <div class="feature-desc">Happy pet = bonus XP. Sad pet = penalty. Your activity shapes their mood.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">EV</div>
-        <div class="feature-name">Random Events</div>
-        <div class="feature-desc">Coding Storm (2x XP), Code Drought, Good Vibes. A new event rolls each day.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">AC</div>
-        <div class="feature-name">Accessories</div>
-        <div class="feature-desc">10 pixel art items and 4 backgrounds. Unlock with XP, equip from the menu.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">DC</div>
-        <div class="feature-name">Decay & Revival</div>
-        <div class="feature-desc">Miss days and your pet gets sick. 7 days absent = runs away. Code 30 min to revive.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="footer-meta">
-      macOS 14+ <span>|</span> 100% local <span>|</span> MIT license
-    </div>
-    <a href="https://github.com/brysonkbarney/kodomon" target="_blank" rel="noopener">GitHub &rarr;</a>
-    <div class="footer-brand">kodomon.app</div>
-  </footer>
-
+  <div class="line"></div>
+  <div class="sub">macOS 14+ <span>|</span> 100% local <span>|</span> open source</div>
+  <div class="links"><a href="https://github.com/brysonkbarney/kodomon">GitHub</a></div>
 </div>
 
 <script>
-function copyInstall() {
-  const cmd = 'curl -fsSL https://kodomon.app/install.sh | bash';
-  navigator.clipboard.writeText(cmd).then(() => {
-    const hint = document.getElementById('copyHint');
-    hint.textContent = 'copied!';
-    hint.classList.add('copied');
-    setTimeout(() => {
-      hint.textContent = 'click to copy';
-      hint.classList.remove('copied');
-    }, 2000);
+function copy() {
+  navigator.clipboard.writeText('curl -fsSL https://kodomon.app/install.sh | bash').then(() => {
+    const h = document.getElementById('h');
+    h.textContent = 'copied!';
+    h.classList.add('ok');
+    setTimeout(() => { h.textContent = 'click to copy'; h.classList.remove('ok'); }, 2000);
   });
 }
-
-document.querySelector('.install-box').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copyInstall(); }
+document.querySelector('.install').addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); copy(); }
 });
 </script>
-
 </body>
 </html>
