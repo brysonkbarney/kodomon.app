@@ -67,12 +67,12 @@ KODOMON_DIR="$HOME/.kodomon"
 HOOKS_DIR="$KODOMON_DIR/hooks"
 mkdir -p "$HOOKS_DIR"
 
-# Extract hook scripts from the app bundle
-BUNDLE_HOOKS="/Applications/Kodomon.app/Contents/Resources/Hooks"
-if [[ -d "$BUNDLE_HOOKS" ]]; then
-    cp "$BUNDLE_HOOKS"/*.sh "$HOOKS_DIR/"
-    chmod +x "$HOOKS_DIR"/*.sh
-fi
+# Download hook scripts from GitHub
+HOOKS_BASE="https://raw.githubusercontent.com/brysonkbarney/kodomon/main/Kodomon/Hooks"
+for hook in session-start.sh session-stop.sh file-event.sh bash-event.sh; do
+    curl -fsSL "$HOOKS_BASE/$hook" -o "$HOOKS_DIR/$hook"
+done
+chmod +x "$HOOKS_DIR"/*.sh
 
 touch "$KODOMON_DIR/events.jsonl"
 
