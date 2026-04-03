@@ -81,14 +81,17 @@ CLAUDE_SETTINGS="$HOME/.claude/settings.json"
 if [[ -f "$CLAUDE_SETTINGS" ]]; then
     if command -v jq &>/dev/null; then
         TMP=$(mktemp)
-        UPDATED=false
 
         # Remove any existing kodomon hooks first, then re-add all of them
         # This ensures updates always have the latest hook config
         jq '
-          (.hooks.SessionStart // []) |= [.[] | select(.hooks[0].command? | test("kodomon") | not)] |
-          (.hooks.PostToolUse // []) |= [.[] | select(.hooks[0].command? | test("kodomon") | not)] |
-          (.hooks.Stop // []) |= [.[] | select(.hooks[0].command? | test("kodomon") | not)] |
+          .hooks //= {} |
+          .hooks.SessionStart //= [] |
+          .hooks.PostToolUse //= [] |
+          .hooks.Stop //= [] |
+          .hooks.SessionStart = [.hooks.SessionStart[] | select(.hooks[0].command? | test("kodomon") | not)] |
+          .hooks.PostToolUse = [.hooks.PostToolUse[] | select(.hooks[0].command? | test("kodomon") | not)] |
+          .hooks.Stop = [.hooks.Stop[] | select(.hooks[0].command? | test("kodomon") | not)] |
           .hooks.SessionStart += [{"hooks": [{"type": "command", "command": "~/.kodomon/hooks/session-start.sh"}]}] |
           .hooks.PostToolUse += [{"matcher": "Write|Edit|MultiEdit", "hooks": [{"type": "command", "command": "~/.kodomon/hooks/file-event.sh"}]}, {"matcher": "Bash", "hooks": [{"type": "command", "command": "~/.kodomon/hooks/bash-event.sh"}]}] |
           .hooks.Stop += [{"hooks": [{"type": "command", "command": "~/.kodomon/hooks/session-stop.sh"}]}]
