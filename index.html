@@ -152,6 +152,28 @@
 
   .links a:hover { text-decoration: underline; }
 
+  .bottom-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    font-size: 11px;
+    color: #D6D0C4;
+    font-weight: 400;
+  }
+
+  .bottom-footer a {
+    color: #D6D0C4;
+    text-decoration: none;
+    margin-left: 16px;
+  }
+
+  .bottom-footer a:hover { text-decoration: underline; }
+
   /* Entrance */
   @keyframes up {
     from { opacity: 0; transform: translateY(12px); }
@@ -202,6 +224,12 @@
   <div class="line"></div>
   <div class="sub">macOS 14+ <span>|</span> 100% local <span>|</span> open source</div>
   <div class="links"><a href="https://github.com/brysonkbarney/kodomon">GitHub</a></div>
+
+</div>
+
+<div class="bottom-footer">
+  <span>&copy; 2026 Bryson Barney</span>
+  <span class="bottom-links"><a href="https://x.com/brysonbarney5">Twitter</a></span>
 </div>
 
 <script>
