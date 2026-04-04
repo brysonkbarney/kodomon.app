@@ -3,6 +3,15 @@
     <channel>
         <title>Kodomon</title>
         <item>
+            <title>1.0.9</title>
+            <pubDate>Sat, 04 Apr 2026 13:23:10 -0600</pubDate>
+            <sparkle:version>9</sparkle:version>
+            <sparkle:shortVersionString>1.0.9</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.0.9/Kodomon.dmg" length="9401207" type="application/octet-stream" sparkle:edSignature="EdMN5iYd7J2/mHiWh4D00a1+Wo35J5bWvkJ3FUnj2OhNDLVJFG/9+nLX1D3jJfrnACb5oIGXd7zeQ+1/E60eCw=="/>
+        </item>
+        <item>
             <title>1.0</title>
             <pubDate>Sat, 04 Apr 2026 11:58:39 -0600</pubDate>
             <sparkle:version>1</sparkle:version>
