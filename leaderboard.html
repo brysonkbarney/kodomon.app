@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kodomon — Leaderboard</title>
+<meta name="description" content="Global Kodomon leaderboard. See who's coding the most.">
+<link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Mono', monospace;
+    background: #F5F0E1;
+    color: #2A2A2A;
+    min-height: 100vh;
+    padding: 48px 24px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: #D83632;
+    z-index: 10;
+  }
+
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .header a {
+    font-size: 11px;
+    color: #6B6560;
+    text-decoration: none;
+  }
+
+  .header a:hover { text-decoration: underline; }
+
+  h1 {
+    font-family: 'DotGothic16', monospace;
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    margin: 8px 0 4px;
+  }
+
+  .jp {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 14px;
+    color: #D83632;
+    letter-spacing: 0.2em;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    color: #6B6560;
+  }
+
+  /* Sort tabs */
+  .sort-bar {
+    display: flex;
+    background: #E8E2D4;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .sort-btn {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B6560;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+  }
+
+  .sort-btn:hover { color: #2A2A2A; }
+  .sort-btn:focus { outline: none; }
+  .sort-btn.active { background: #D83632; color: #fff; }
+
+  /* Entries */
+  .entry {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 6px;
+    background: #FAF7F0;
+    border-radius: 8px;
+    transition: transform 0.1s;
+  }
+
+  .entry:hover { transform: translateX(2px); }
+  .entry.me { background: #F0E8DA; border-left: 3px solid #D83632; }
+
+  .rank {
+    font-size: 13px;
+    font-weight: 700;
+    width: 36px;
+    flex-shrink: 0;
+    color: #6B6560;
+    text-align: center;
+    display: flex;
+    align-items: center;
+  }
+
+  .rank.top { color: #D83632; }
+
+  .sprite-box {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sprite-box canvas {
+    image-rendering: pixelated;
+    width: 32px;
+    height: 32px;
+  }
+
+  .info { flex: 1; min-width: 0; }
+
+  .pet-name {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .stage-label {
+    font-size: 10px;
+    color: #6B6560;
+  }
+
+  .stat {
+    text-align: right;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    color: #6B6560;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 48px 0;
+    color: #6B6560;
+    font-size: 13px;
+  }
+
+  .loading { text-align: center; padding: 48px 0; color: #6B6560; }
+
+  .bottom-footer {
+    text-align: center;
+    margin-top: 48px;
+    font-size: 11px;
+    color: #D6D0C4;
+  }
+
+  .bottom-footer a {
+    color: #D83632;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .bottom-footer a:hover { text-decoration: underline; }
+
+  @keyframes up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .header { animation: up 0.4s ease-out both; }
+  .sort-bar { animation: up 0.4s ease-out 0.1s both; }
+  .entries { animation: up 0.4s ease-out 0.2s both; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <a href="/">← kodomon.app</a>
+    <h1>LEADERBOARD</h1>
+    <div class="jp">リーダーボード</div>
+    <div class="subtitle">Global Kodomon rankings</div>
+  </div>
+
+  <div class="sort-bar">
+    <button class="sort-btn active" data-sort="total_xp">XP</button>
+    <button class="sort-btn" data-sort="current_streak">Streak</button>
+    <button class="sort-btn" data-sort="active_days">Days</button>
+    <button class="sort-btn" data-sort="lines_written">Lines</button>
+  </div>
+
+  <div class="entries" id="entries">
+    <div class="loading">Loading...</div>
+  </div>
+
+  <div class="bottom-footer">
+    <a href="/">kodomon.app</a> · <a href="https://github.com/brysonkbarney/kodomon">GitHub</a>
+  </div>
+</div>
+
+<script>
+const API = 'https://iczwbhwfepgldhznbfjz.supabase.co/functions/v1/leaderboard-sync';
+
+const STAGES = {
+  tamago: { name: 'Tamago 卵', color: '#C48A6A' },
+  kobito: { name: 'Kobito 小人', color: '#7B9E6B' },
+  kani: { name: 'Kani 蟹', color: '#D83632' },
+  kamisama: { name: 'Kamisama 神様', color: '#9B6BBF' },
+};
+
+const SORT_LABELS = {
+  total_xp: 'XP',
+  current_streak: 'streak',
+  active_days: 'days',
+  lines_written: 'lines',
+};
+
+let currentSort = 'total_xp';
+
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    fetchLeaderboard();
+  });
+});
+
+function statValue(entry) {
+  switch (currentSort) {
+    case 'current_streak': return entry.current_streak + 'd';
+    case 'active_days': return entry.active_days;
+    case 'lines_written': return entry.lines_written.toLocaleString();
+    default: return Math.floor(entry.total_xp).toLocaleString();
+  }
+}
+
+function drawSprite(canvas, stage, hue) {
+  // Match the app's PixelSpriteView color system exactly
+  // Tamago always uses hue 0.07, others use petHue
+  const h = (stage === 'tamago' ? 0.07 : hue) * 360;
+
+  // App colors: B=body, D=dark outline, L=light, E=eye, W=white eye
+  const colors = {
+    D: `hsl(${h}, 55%, 50%)`,    // dark outline
+    B: `hsl(${h}, 50%, 82%)`,    // body
+    L: `hsl(${h}, 35%, 92%)`,    // light highlight
+    E: '#141414',                 // eye black
+    W: '#f2f2f2',                 // eye white
+  };
+
+  // Simplified sprite grids matching the app's actual sprites
+  // x=clear, D=dark, B=body, L=light, E=eye, W=white
+  const sprites = {
+    tamago: [
+      'xxDDDDxx',
+      'xDLLLLDx',
+      'DLLBBBLLD',
+      'xDLBBBBLD',
+      'xDBBBBBBD',
+      'DBBBBBBBD',
+      'DBBBBBBBD',
+      'DBBBBBBBD',
+      'xDBBBBBDx',
+      'xxDDDDxx',
+    ],
+    kobito: [
+      'xxDDDDxx',
+      'xDLLLLDx',
+      'DLBBBBLLD',
+      'DBEBBEBBD',
+      'DBWBBWBBD',
+      'xDBBBBDx',
+      'xxDBBDxx',
+      'xDBBBBDx',
+      'xDBBBBDx',
+      'xDxDDxDx',
+    ],
+    kani: [
+      'DxxDDxxD',
+      'DDxDDxDD',
+      'xDLLLLDx',
+      'DLBBBBLLD',
+      'DBEBBEBBD',
+      'DBWBBWBBD',
+      'xDBBBBDx',
+      'DxDDDDxD',
+      'DxxxxxxD',
+    ],
+    kamisama: [
+      'xLLLLLLx',
+      'LDDDDDDLx',
+      'DLLBBLLDD',
+      'DLBBBBLLD',
+      'DBEBBEBBD',
+      'DBWBBWBBD',
+      'xDBBBBDx',
+      'xDBBBBDx',
+      'xDxDDxDx',
+    ],
+  };
+
+  const grid = sprites[stage] || sprites.tamago;
+  const rows = grid.length;
+  const cols = grid[0].length;
+  const px = 2;
+
+  const ctx = canvas.getContext('2d');
+  canvas.width = cols * px;
+  canvas.height = rows * px;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  grid.forEach((row, y) => {
+    for (let i = 0; i < row.length; i++) {
+      const c = row[i];
+      if (c !== 'x') {
+        ctx.fillStyle = colors[c] || '#888';
+        ctx.fillRect(i * px, y * px, px, px);
+      }
+    }
+  });
+}
+
+async function fetchLeaderboard() {
+  const el = document.getElementById('entries');
+  try {
+    const res = await fetch(`${API}?sort=${currentSort}&limit=50`);
+    const data = await res.json();
+
+    if (!data.length) {
+      el.innerHTML = '<div class="empty">No Kodomon on the leaderboard yet. Be the first!</div>';
+      return;
+    }
+
+    el.innerHTML = data.map((entry, i) => {
+      const rank = i + 1;
+      const stage = STAGES[entry.stage] || STAGES.tamago;
+      const label = SORT_LABELS[currentSort];
+      return `
+        <div class="entry">
+          <div class="rank ${rank <= 3 ? 'top' : ''}">#${rank}</div>
+          <div class="info">
+            <div class="pet-name">${esc(entry.pet_name)}</div>
+            <div class="stage-label">${stage.name}</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${statValue(entry)}</div>
+            <div class="stat-label">${label}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+  } catch (e) {
+    el.innerHTML = '<div class="empty">Failed to load leaderboard.</div>';
+  }
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+fetchLeaderboard();
+// Refresh every 60 seconds
+setInterval(fetchLeaderboard, 60000);
+</script>
+</body>
+</html>
