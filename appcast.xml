@@ -9,7 +9,7 @@
             <sparkle:shortVersionString>1.0.16</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.0.16/Kodomon.zip" length="9245917" type="application/octet-stream" sparkle:edSignature="kmKahpkcbp3L6k+fTEVESB4XpdauYdH57NCVOtpc+8wiZftZ+7FNw74QQYKmcidhAQhyLv9Gu/TATgREY7fcCA=="/>
+            <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.0.16/Kodomon.dmg" length="9470581" type="application/octet-stream" sparkle:edSignature="5moePOOiohtkELvb0jBKi+dq4O6kAbNnIZ4CONaFdsMAwrgnjRegO3omCOuD/5VPXSXNkZTlEYD0jhk21i9qCg=="/>
         </item>
         <item>
             <title>1.0.15</title>
