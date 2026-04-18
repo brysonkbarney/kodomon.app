@@ -3,6 +3,15 @@
     <channel>
         <title>Kodomon</title>
         <item>
+            <title>1.1.4</title>
+            <pubDate>Sat, 18 Apr 2026 17:10:51 -0600</pubDate>
+            <sparkle:version>22</sparkle:version>
+            <sparkle:shortVersionString>1.1.4</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.1.4/Kodomon.dmg" length="11726531" type="application/octet-stream" sparkle:edSignature="MuRIJZaK1glWHMp4kjBR5ZWuBjCHYw53mJavXuOBuywxoG1fhLHWKwo0cOV93EcFqXXTAE2X3pd/lRuQ+4X4BA=="/>
+        </item>
+        <item>
             <title>1.1.3</title>
             <pubDate>Sat, 18 Apr 2026 16:59:27 -0600</pubDate>
             <sparkle:version>21</sparkle:version>
@@ -19,15 +28,6 @@
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
             <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.1.2/Kodomon.dmg" length="11718660" type="application/octet-stream" sparkle:edSignature="nRx9USe2ZotMqX7WhBxH+olbne4uuHwIPi4sHZ68ktLEDTOvXD7ocKs3aId5e8e2GihkO4fn0Ns1+HXB25dQBg=="/>
-        </item>
-        <item>
-            <title>1.1.1</title>
-            <pubDate>Sat, 18 Apr 2026 09:49:12 -0600</pubDate>
-            <sparkle:version>19</sparkle:version>
-            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/brysonkbarney/kodomon/releases/download/v1.1.1/Kodomon.dmg" length="11718632" type="application/octet-stream" sparkle:edSignature="18JUNlAgTXiREJrTWZXXNJthiK7vz+J14v1tRCcpUJQQqNbgNLPjKjUcjfNM4yXK2NrOqZWbJNVuCPrBOIIXBw=="/>
         </item>
     </channel>
 </rss>
